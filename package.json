@@ -1,0 +1,77 @@
+{
+  "name": "drizzle-filters",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Type-safe filtering for Drizzle ORM with Zod validation. Prisma-like filter API for modern TypeScript applications.",
+  "keywords": [
+    "drizzle",
+    "drizzle-orm",
+    "filters",
+    "zod",
+    "validation",
+    "typescript",
+    "query-builder",
+    "prisma",
+    "trpc",
+    "database"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/joaodibba/drizzle-filters.git"
+  },
+  "bugs": {
+    "url": "https://github.com/joaodibba/drizzle-filters/issues"
+  },
+  "homepage": "https://github.com/joaodibba/drizzle-filters#readme",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run build && npm run type-check",
+    "release": "npm run build && npm publish"
+  },
+  "peerDependencies": {
+    "drizzle-orm": ">=0.29.0",
+    "zod": ">=3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.15.0",
+    "@typescript-eslint/parser": "^6.15.0",
+    "@vitest/coverage-v8": "^1.6.1",
+    "@vitest/ui": "^1.6.1",
+    "drizzle-orm": "^0.29.0",
+    "eslint": "^8.55.0",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^1.6.1",
+    "zod": "^3.22.4"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
