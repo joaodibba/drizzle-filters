@@ -4,6 +4,7 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Drizzle Filters",
   description: "Type-safe filtering for Drizzle ORM with Zod validation. Prisma-like filter API for modern TypeScript applications.",
+  base: './',
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
