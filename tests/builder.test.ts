@@ -104,7 +104,7 @@ describe('FilterBuilder - buildWhere', () => {
   it('validates filters by default', () => {
     expect(() => {
       FilterBuilder.buildWhere([
-        { filter: { contains: 123 }, column: users.name, type: 'string' }
+        { filter: { contains: 123 as any }, column: users.name, type: 'string' }
       ])
     }).toThrow(/Filter validation failed/)
   })
@@ -201,7 +201,7 @@ describe('FilterBuilder - Type Coercion', () => {
 
   it('coerces string to Date', () => {
     const where = FilterBuilder.buildWhere([
-      { filter: { gte: '2024-01-01' }, column: users.createdAt, type: 'date' }
+      { filter: { gte: new Date('2024-01-01') }, column: users.createdAt, type: 'date' }
     ])
     expect(where).toBeDefined()
   })
@@ -252,7 +252,7 @@ describe('FilterBuilder - Error Handling', () => {
   it('throws error for invalid string filter with validation', () => {
     expect(() => {
       FilterBuilder.buildWhere([
-        { filter: { contains: 123 }, column: users.name, type: 'string' }
+        { filter: { contains: 123 as any }, column: users.name, type: 'string' }
       ])
     }).toThrow(/Filter validation failed/)
   })
@@ -260,7 +260,7 @@ describe('FilterBuilder - Error Handling', () => {
   it('throws error for invalid number filter with validation', () => {
     expect(() => {
       FilterBuilder.buildWhere([
-        { filter: { gte: 'not a number' }, column: users.age, type: 'number' }
+        { filter: { gte: 'not a number' as any }, column: users.age, type: 'number' }
       ])
     }).toThrow()
   })
@@ -268,7 +268,7 @@ describe('FilterBuilder - Error Handling', () => {
   it('provides clear error messages', () => {
     try {
       FilterBuilder.buildWhere([
-        { filter: { unknownOperator: 'test' }, column: users.name, type: 'string' }
+        { filter: { unknownOperator: 'test' } as any, column: users.name, type: 'string' }
       ])
     } catch (error) {
       expect(error).toBeDefined()
@@ -305,8 +305,8 @@ describe('FilterBuilder - Real-world Scenarios', () => {
       { filter: { equals: true }, column: users.active, type: 'boolean' },
       { 
         filter: { 
-          gte: '2024-01-01', 
-          lte: '2024-12-31' 
+          gte: new Date('2024-01-01'), 
+          lte: new Date('2024-12-31') 
         }, 
         column: users.createdAt, 
         type: 'date' 
