@@ -44,7 +44,7 @@ listUsers({ name: { contains: 'john' }, age: { gte: 18 } })
 
 ## Choosing an API Method
 | Use Case | Method |
-|----------|--------|gi
+|----------|--------|
 | Flat AND combination of simple filters | `FilterBuilder.buildWhere` |
 | Mixed operators per column with per-column AND/OR grouping | `FilterBuilder.buildFilterConditions` |
 | Complex groupings ( (A OR B) AND (C AND D) ) | `FilterBuilder.buildNestedFilters` |
