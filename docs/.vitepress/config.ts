@@ -5,6 +5,7 @@ export default defineConfig({
   title: "Drizzle Filters",
   description: "Type-safe filtering for Drizzle ORM with Zod validation. Prisma-like filter API for modern TypeScript applications.",
   base: '/drizzle-filters/',
+  head: [['link', { rel: 'icon', href: 'https://orm.drizzle.team/favicon.ico' }]],
   themeConfig: {
     // https://vitepress.dev/reference/default-theme-config
     nav: [
