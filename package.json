@@ -1,6 +1,6 @@
 {
   "name": "drizzle-filters",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "description": "Type-safe filtering for Drizzle ORM with Zod validation. Prisma-like filter API for modern TypeScript applications.",
   "keywords": [
