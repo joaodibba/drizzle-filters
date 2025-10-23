@@ -275,6 +275,24 @@ describe('FilterBuilder - Error Handling', () => {
       expect((error as Error).message).toContain('Filter validation failed')
     }
   })
+
+  it('handles type mismatch errors gracefully (string passed to number field)', () => {
+    expect(() => {
+      FilterBuilder.buildWhere([
+        { filter: { lte: 'a' as any }, column: users.age, type: 'number' }
+      ])
+    }).toThrow(/Filter validation failed.*Expected number, received string/)
+  })
+
+  it('handles multiple filters with one invalid type', () => {
+    expect(() => {
+      FilterBuilder.buildWhere([
+        { filter: { in: ['monad'] }, column: users.name, type: 'string' },
+        { filter: { gte: 3 }, column: users.age, type: 'number' },
+        { filter: { lte: 'invalid' as any }, column: users.id, type: 'number' }
+      ])
+    }).toThrow(/Filter validation failed/)
+  })
 })
 
 describe('FilterBuilder - Real-world Scenarios', () => {

@@ -75,9 +75,11 @@ export class FilterBuilder {
         filter = this.validateFilter(validFilter, type)
       } catch (error) {
         if (error instanceof z.ZodError) {
-          throw new Error(`Filter validation failed: ${error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ')}`)
+          const errorMessages = error.errors?.map(e => `${e.path.join('.')}: ${e.message}`).join(', ') || 'Unknown validation error'
+          throw new Error(`Filter validation failed: ${errorMessages}`)
         }
-        throw error
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        throw new Error(`Filter validation failed: ${errorMessage}`)
       }
     }
     

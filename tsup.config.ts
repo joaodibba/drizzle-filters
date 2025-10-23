@@ -11,4 +11,9 @@ export default defineConfig({
   minify: false,
   external: ['drizzle-orm', 'zod'],
   treeshake: true,
+  outExtension({ format }) {
+    return {
+      js: format === 'cjs' ? '.cjs' : '.mjs',
+    }
+  },
 })

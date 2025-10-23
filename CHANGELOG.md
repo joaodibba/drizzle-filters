@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Fixed
+- Improved error handling in `buildSingleFilter` to prevent "undefined is not an object" errors when validation fails
+- Added optional chaining for `error.errors` access to ensure robust error messages across all JavaScript environments
+- Enhanced error messages to include fallback for edge cases where ZodError structure is unexpected
+
+### Added
+- New test cases for type mismatch validation errors
+- Test coverage for multiple filters with invalid types
+
 ## [0.1.1] - 2025-10-09
 
 ### Added
