@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### Added
 - `createFilter(table, { allow })`: Zod schema plus `toWhere()` for a whole where input, with column types inferred from the table and client-side `AND` / `OR` / `NOT`
 - Drizzle 1.0 and Zod 4 support
+- `toQueryWhere(input)` for Drizzle 1.0 `db.query` filters, and `toWhere(input, table)` for 0.x relational queries
 
 ### Fixed
 - An object `not` no longer drops sibling operators (`{ gt: 5, not: { equals: 10 } }`)

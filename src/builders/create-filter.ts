@@ -1,4 +1,4 @@
-import { and, or, not, getTableColumns, Column, SQL, Table } from 'drizzle-orm'
+import { and, or, not, sql, getTableColumns, Column, SQL, Table } from 'drizzle-orm'
 import { z } from 'zod'
 import {
   stringFilterSchema,
@@ -69,18 +69,17 @@ export function createFilter<T extends Table, K extends FilterableKeys<T> = Filt
     }).strict(),
   ) as any
 
-  const build = (input: WhereInput<T, K>): SQL | undefined => {
+  const build = (input: WhereInput<T, K>, cols: Record<string, Column>): SQL | undefined => {
     const parts: (SQL | undefined)[] = []
     for (const [key, value] of Object.entries(input)) {
       if (value === undefined) continue
-      if (key === 'AND') parts.push(and(...(value as WhereInput<T, K>[]).map(build)))
-      else if (key === 'OR') parts.push(or(...(value as WhereInput<T, K>[]).map(build)))
+      if (key === 'AND') parts.push(and(...(value as WhereInput<T, K>[]).map(v => build(v, cols))))
+      else if (key === 'OR') parts.push(or(...(value as WhereInput<T, K>[]).map(v => build(v, cols))))
       else if (key === 'NOT') {
-        const inner = build(value as WhereInput<T, K>)
+        const inner = build(value as WhereInput<T, K>, cols)
         if (inner) parts.push(not(inner))
       } else {
-        const f = fields[key]
-        parts.push(and(...FilterBuilder.buildSingleFilter(value as any, f.column, f.type, false)))
+        parts.push(and(...FilterBuilder.buildSingleFilter(value as any, cols[key], fields[key].type, false)))
       }
     }
     return and(...parts)
@@ -88,6 +87,11 @@ export function createFilter<T extends Table, K extends FilterableKeys<T> = Filt
 
   return {
     schema,
-    toWhere: (input: unknown) => build(schema.parse(input)),
+    toWhere: (input: unknown, table?: Table) =>
+      build(schema.parse(input), table ? (table as unknown as Record<string, Column>) : columns),
+    toQueryWhere: (input: unknown) => {
+      const parsed = schema.parse(input)
+      return { RAW: (table: any) => build(parsed, table) ?? sql`true` }
+    },
   }
 }
