@@ -22,6 +22,18 @@ await db.select().from(users).where(where)
 
 Column types are read from the table, unknown fields are rejected, and clients can nest `AND`, `OR` and `NOT`. `usersFilter.schema` is the Zod schema, for tRPC inputs or OpenAPI. Tested with Drizzle 0.45 and 1.0-rc, Zod 3 and 4. Case-insensitive matching uses `ILIKE` on Postgres and `lower() LIKE` elsewhere.
 
+### Relational queries
+```ts
+// Drizzle 1.0
+await db.query.users.findMany({
+  where: { ...usersFilter.toQueryWhere(input), posts: true },
+  with: { posts: { where: postsFilter.toQueryWhere(postsInput) } },
+})
+
+// Drizzle 0.x
+await db.query.users.findMany({ where: (t) => usersFilter.toWhere(input, t) })
+```
+
 ## Picking a Builder
 | Scenario | Method |
 |----------|--------|
