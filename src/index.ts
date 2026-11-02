@@ -39,7 +39,7 @@ export {
 } from './types'
 
 // Export builders
-export { FilterBuilder } from './builders'
+export { FilterBuilder, createFilter, type WhereInput } from './builders'
 
 // Export utilities
 export { textSearch, inFilter } from './utils'

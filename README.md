@@ -9,6 +9,19 @@ Type-safe filters for Drizzle ORM with Zod validation.
 npm install drizzle-filters drizzle-orm zod
 ```
 
+## Quick start
+```ts
+import { createFilter } from 'drizzle-filters'
+
+const usersFilter = createFilter(users, { allow: ['name', 'age', 'createdAt'] })
+
+// GET /users?where={"OR":[{"name":{"contains":"jo"}},{"age":{"gte":18}}]}
+const where = usersFilter.toWhere(JSON.parse(req.query.where))
+await db.select().from(users).where(where)
+```
+
+Column types are read from the table, unknown fields are rejected, and clients can nest `AND`, `OR` and `NOT`. `usersFilter.schema` is the Zod schema, for tRPC inputs or OpenAPI. Tested with Drizzle 0.45 and 1.0-rc, Zod 3 and 4. Case-insensitive matching uses `ILIKE` on Postgres and `lower() LIKE` elsewhere.
+
 ## Picking a Builder
 | Scenario | Method |
 |----------|--------|

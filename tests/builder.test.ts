@@ -281,7 +281,7 @@ describe('FilterBuilder - Error Handling', () => {
       FilterBuilder.buildWhere([
         { filter: { lte: 'a' as any }, column: users.age, type: 'number' }
       ])
-    }).toThrow(/Filter validation failed.*Expected number, received string/)
+    }).toThrow(/Filter validation failed.*expected number, received string/i)
   })
 
   it('handles multiple filters with one invalid type', () => {

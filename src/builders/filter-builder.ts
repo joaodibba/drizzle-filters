@@ -1,4 +1,5 @@
-import { and, or, eq, ne, lt, lte, gt, gte, inArray, not, ilike, isNull, isNotNull, SQL } from 'drizzle-orm'
+import { and, or, eq, ne, lt, lte, gt, gte, inArray, not, isNull, isNotNull, SQL } from 'drizzle-orm'
+import { escapeLike, likeInsensitive } from '../utils/like'
 import { AnyColumn } from 'drizzle-orm'
 import { z } from 'zod'
 import { 
@@ -58,31 +59,29 @@ export class FilterBuilder {
    * @param validate Whether to validate the filter with Zod (default true)
    * @returns Array of conditions to be combined with AND/OR
    */
-  private static buildSingleFilter(
+  static buildSingleFilter(
     filter: FilterValue, 
     column: AnyColumn, 
     type: FilterType = 'string',
     validate: boolean = true
   ): SQL<unknown>[] {
     if (!filter) return []
-    
-    // At this point, filter is not null/undefined
-    const validFilter = filter as NonNullable<FilterValue>
-    
-    // Validate filter if requested
+
+    let validFilter: FilterValue = filter
     if (validate) {
       try {
-        filter = this.validateFilter(validFilter, type)
+        validFilter = this.validateFilter(filter, type)
       } catch (error) {
         if (error instanceof z.ZodError) {
-          const errorMessages = error.errors?.map(e => `${e.path.join('.')}: ${e.message}`).join(', ') || 'Unknown validation error'
+          const errorMessages = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join(', ') || 'Unknown validation error'
           throw new Error(`Filter validation failed: ${errorMessages}`)
         }
         const errorMessage = error instanceof Error ? error.message : String(error)
         throw new Error(`Filter validation failed: ${errorMessage}`)
       }
     }
-    
+    if (!validFilter) return []
+
     const conditions: SQL<unknown>[] = []
     
     // Transform function based on type
@@ -104,13 +103,9 @@ export class FilterBuilder {
     // Handle nested 'not' filter recursively
     if (validFilter.not !== undefined && typeof validFilter.not === 'object') {
       const notConditions = this.buildSingleFilter(validFilter.not as FilterValue, column, type, false)
-      if (notConditions.length > 0) {
-        const combined = and(...notConditions)
-        if (combined) {
-          conditions.push(not(combined))
-        }
-      }
-      return conditions
+      const combined = and(...notConditions)
+      const negated = combined && not(combined)
+      if (negated) conditions.push(negated)
     }
 
     // Standard operators
@@ -129,9 +124,9 @@ export class FilterBuilder {
         const values = Array.isArray(val) ? val.map(transform) : [transform(val)]
         return not(inArray(column, values))
       },
-      contains: (val: any) => type === 'string' ? ilike(column, `%${val}%`) : eq(column, transform(val)),
-      startsWith: (val: any) => type === 'string' ? ilike(column, `${val}%`) : eq(column, transform(val)),
-      endsWith: (val: any) => type === 'string' ? ilike(column, `%${val}`) : eq(column, transform(val)),
+      contains: (val: any) => type === 'string' ? likeInsensitive(column, `%${escapeLike(val)}%`) : eq(column, transform(val)),
+      startsWith: (val: any) => type === 'string' ? likeInsensitive(column, `${escapeLike(val)}%`) : eq(column, transform(val)),
+      endsWith: (val: any) => type === 'string' ? likeInsensitive(column, `%${escapeLike(val)}`) : eq(column, transform(val)),
       isNull: (val: boolean) => val ? isNull(column) : isNotNull(column),
       isNotNull: (val: boolean) => val ? isNotNull(column) : isNull(column)
     }
