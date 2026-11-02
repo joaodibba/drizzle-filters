@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- `createFilter(table, { allow })`: Zod schema plus `toWhere()` for a whole where input, with column types inferred from the table and client-side `AND` / `OR` / `NOT`
+- Drizzle 1.0 and Zod 4 support
+
+### Fixed
+- An object `not` no longer drops sibling operators (`{ gt: 5, not: { equals: 10 } }`)
+- Validated (coerced) filter values are now used instead of the raw input
+- `%`, `_` in `contains` / `startsWith` / `endsWith` / `textSearch` are escaped
+- Case-insensitive matching works on MySQL and SQLite
+
 ### Fixed
 - Improved error handling in `buildSingleFilter` to prevent "undefined is not an object" errors when validation fails
 - Added optional chaining for `error.errors` access to ensure robust error messages across all JavaScript environments

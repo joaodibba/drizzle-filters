@@ -1,4 +1,5 @@
-import { ilike, inArray, or } from 'drizzle-orm'
+import { inArray, or } from 'drizzle-orm'
+import { escapeLike, likeInsensitive } from './like'
 import { AnyColumn } from 'drizzle-orm'
 import { FilterType } from '../types'
 
@@ -19,7 +20,7 @@ export function textSearch(searchTerm: string, columns: AnyColumn[]): any {
   if (!searchTerm?.trim()) return undefined
   
   const searchConditions = columns.map(column => 
-    ilike(column, `%${searchTerm.trim()}%`)
+    likeInsensitive(column, `%${escapeLike(searchTerm.trim())}%`)
   )
   return or(...searchConditions)
 }
